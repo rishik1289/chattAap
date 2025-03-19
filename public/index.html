@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #messages {
+            list-style-type: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: scroll;
+        }
+        #messages li {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+        }
+        #message {
+            width: 80%;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat Application</h1>
+    <ul id="messages"></ul>
+    <input id="message" autocomplete="off" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = io();  // Connect to the server
+
+        socket.on('connect', () => {
+            console.log('Connected to the server!');
+        });
+
+        // Listen for incoming messages
+        socket.on('chat message', function(msg) {
+            const li = document.createElement('li');
+            li.textContent = msg;
+            document.getElementById('messages').appendChild(li);
+        });
+
+        // Send a message to the server
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            if (message.trim()) {
+                socket.emit('chat message', message);
+                document.getElementById('message').value = ''; // Clear the input
+            }
+        }
+    </script>
+</body>
+</html>
